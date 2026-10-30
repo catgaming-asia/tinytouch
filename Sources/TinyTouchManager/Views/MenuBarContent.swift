@@ -43,6 +43,8 @@ struct MenuBarContent: View {
             .keyboardShortcut("p")
         Button("Xem nhật ký hoạt động…") { opener.open(.logs) }
             .keyboardShortcut("l")
+        Button("Hướng dẫn sử dụng…") { opener.open(.guide) }
+            .keyboardShortcut("h")
 
         if !model.accessibilityTrusted {
             Divider()

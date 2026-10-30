@@ -22,6 +22,9 @@ Kèm theo là lệnh `tinytouch` dùng trong Terminal, có cùng các lệnh nh�
 | Firmware | So phiên bản; cập nhật từ **web MrOld** hoặc **file .bin trên máy**; chế độ **cứu hộ** khi thiết bị đang ở chế độ nạp; tự sao lưu gói firmware của thiết bị để dùng khi không có mạng |
 | Nhật ký | Nhật ký hoạt động, xem lệnh gửi/nhận (TX/RX), gửi lệnh thô |
 | Nâng cao | Khôi phục cài đặt gốc (phải gõ `RESET` để xác nhận) |
+| Hướng dẫn | Hướng dẫn đầy đủ ngay trong app: bắt đầu nhanh, từng tính năng, lệnh CLI, firmware, khắc phục sự cố |
+
+Nhật ký hoạt động được ghi ra `~/Library/Logs/TinyTouchManager.log`, không chứa mật khẩu hay khóa.
 
 Mọi thay đổi cấu hình đều làm như trang web: `CONFIG_UNLOCK` (chạm vân tay chủ sở hữu) → lệnh → `CONFIG_LOCK`.
 
@@ -34,6 +37,13 @@ scripts/build-app.sh --install
 ```
 
 Script này build `dist/TinyTouch Manager.app` và `dist/tinytouch`, chép app vào `/Applications`, đồng thời chép `firmware-backup/` vào bộ nhớ đệm offline của app.
+
+Nên ký app bằng chứng chỉ Apple Development của bạn. Khi đó quyền Trợ năng và Keychain được giữ lại sau mỗi lần cập nhật app; nếu ký ad-hoc, macOS sẽ hỏi lại quyền sau mỗi lần build:
+
+```bash
+security find-identity -v -p codesigning
+TINYTOUCH_SIGN_IDENTITY="Apple Development: Tên (TEAMID)" scripts/build-app.sh --install
+```
 
 Sau khi cài:
 

@@ -18,7 +18,6 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources/bin"
 cp "$BIN/TinyTouchManager" "$APP/Contents/MacOS/TinyTouchManager"
 cp "$BIN/tinytouch" "$APP/Contents/Resources/bin/tinytouch"
-cp "$BIN/tinytouch" "$ROOT/dist/tinytouch"
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -41,8 +40,14 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 </plist>
 PLIST
 
-codesign --force --sign - --identifier "$BUNDLE_ID" "$APP/Contents/Resources/bin/tinytouch"
-codesign --force --sign - --identifier "$BUNDLE_ID" "$APP"
+# Signing with a real identity keeps Accessibility and Keychain grants across rebuilds;
+# ad-hoc signatures change every build, so macOS asks again after each update.
+#   TINYTOUCH_SIGN_IDENTITY="Apple Development: Your Name (TEAMID)" scripts/build-app.sh --install
+IDENTITY="${TINYTOUCH_SIGN_IDENTITY:--}"
+codesign --force --sign "$IDENTITY" --identifier "$BUNDLE_ID.cli" "$APP/Contents/Resources/bin/tinytouch"
+codesign --force --sign "$IDENTITY" --identifier "$BUNDLE_ID" "$APP"
+cp "$APP/Contents/Resources/bin/tinytouch" "$ROOT/dist/tinytouch"
+echo "Signed with: $IDENTITY"
 echo "Built $APP (v$VERSION)"
 
 if [[ "${1:-}" == "--install" ]]; then

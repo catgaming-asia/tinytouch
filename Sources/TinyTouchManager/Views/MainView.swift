@@ -14,6 +14,7 @@ struct MainView: View {
         } detail: {
             Group {
                 switch model.selection ?? .overview {
+                case .guide: GuideView()
                 case .overview: OverviewView()
                 case .fingers: FingersView()
                 case .mode: ModeView()

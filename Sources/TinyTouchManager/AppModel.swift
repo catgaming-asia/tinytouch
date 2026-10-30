@@ -31,11 +31,12 @@ enum ConnectionState: Equatable {
 }
 
 enum AppSection: String, CaseIterable, Identifiable {
-    case overview, fingers, mode, keys, passkeys, pairing, unlock, firmware, logs, advanced
+    case overview, fingers, mode, keys, passkeys, pairing, unlock, firmware, logs, advanced, guide
     var id: String { rawValue }
 
     var title: String {
         switch self {
+        case .guide: return "Hướng dẫn"
         case .overview: return "Tổng quan"
         case .fingers: return "Vân tay & Mật khẩu"
         case .mode: return "Chế độ hoạt động"
@@ -51,6 +52,7 @@ enum AppSection: String, CaseIterable, Identifiable {
 
     var icon: String {
         switch self {
+        case .guide: return "book"
         case .overview: return "gauge.with.dots.needle.33percent"
         case .fingers: return "touchid"
         case .mode: return "switch.2"
@@ -524,8 +526,10 @@ final class AppModel: ObservableObject {
     // MARK: Logging
 
     func log(_ kind: LogEntry.Kind, _ message: String) {
-        logs.append(LogEntry(kind: kind, message: message))
+        let entry = LogEntry(kind: kind, message: message)
+        logs.append(entry)
         if logs.count > 1000 { logs.removeFirst(logs.count - 1000) }
+        if kind != .tx && kind != .rx { FileLog.shared.write(entry) }
     }
 
     func clearLogs() { logs.removeAll() }
