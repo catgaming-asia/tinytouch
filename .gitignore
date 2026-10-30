@@ -60,3 +60,13 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Build output
+.build/
+dist/
+
+# MrOld firmware: keep only this unit's encrypted package and a trimmed manifest in git.
+# The full manifest lists other customers' devices; the generic image is redistributable firmware.
+firmware-backup/manifest.full.json
+firmware-backup/**/generic_unencrypted.bin
+.DS_Store

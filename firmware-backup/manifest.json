@@ -1,0 +1,21 @@
+{
+  "version": "1.1.7",
+  "releaseDate": "2026-10-29",
+  "appOffset": "0x10000",
+  "totalDevices": 1,
+  "generic": {
+    "file": "updates/generic_unencrypted.bin",
+    "size": 432160,
+    "sha256": "b0b8028cbd844a14efef1a233752130ec50a83b7c693a04ed32c54920aef5e54",
+    "encrypted": false
+  },
+  "devices": {
+    "90DA72470794": {
+      "serial": "TT-2026-470794",
+      "file": "updates/90DA72470794.bin",
+      "size": 432160,
+      "sha256": "c46f856fc6fecfc8a77fda40d3e2c81fc70f52746dc1648f9cc8fa4018c6e9eb",
+      "encrypted": true
+    }
+  }
+}
