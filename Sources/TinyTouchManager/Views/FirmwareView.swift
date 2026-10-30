@@ -54,10 +54,6 @@ private struct FirmwareContent: View {
             }
 
             Section {
-                LabeledContent("esptool", value: updater.esptoolPath ?? "Chưa cài")
-                if updater.esptoolPath == nil {
-                    Text("Cài công cụ nạp bằng lệnh:  brew install esptool").font(.callout.monospaced()).textSelection(.enabled)
-                }
                 Picker("Nguồn firmware", selection: $useLocalFile) {
                     Text("Tải từ web MrOld (tự dùng bản đã lưu khi web sập)").tag(false)
                     Text("Chọn file .bin trên máy").tag(true)
@@ -70,11 +66,19 @@ private struct FirmwareContent: View {
                         Button("Chọn file…", action: pickFile)
                     }
                 }
+                HStack {
+                    Button("Kiểm tra chip (chỉ đọc)") { updater.inspectChip() }
+                        .disabled(!model.connection.isConnected || updater.isRunning || model.busy)
+                    if let report = updater.chipReport {
+                        Text("MAC \(report.mac) · mã hóa \(report.security.flashEncrypted ? "BẬT" : "tắt") · Secure Boot \(report.security.secureBoot ? "BẬT" : "tắt")")
+                            .font(.callout).foregroundStyle(.secondary)
+                    }
+                }
                 Button("Cập nhật firmware…") { confirm = true }
                     .buttonStyle(.borderedProminent)
-                    .disabled(!model.connection.isConnected || updater.isRunning || updater.esptoolPath == nil || model.busy || !sourceReady)
+                    .disabled(!model.connection.isConnected || updater.isRunning || model.busy || !sourceReady)
                 Button("Cứu hộ: nạp lại gói đã lưu (thiết bị đang ở chế độ nạp)…") { confirmRecovery = true }
-                    .disabled(updater.isRunning || updater.esptoolPath == nil || model.connection.isConnected || !sourceReady)
+                    .disabled(updater.isRunning || model.connection.isConnected || !sourceReady)
                     .help("Dùng khi tinyTouch không chạy được: giữ nút BOOT khi cắm USB để vào chế độ nạp.")
                 if updater.phase == .flashing || updater.progress > 0 {
                     ProgressView(value: updater.progress) { Text("Đang nạp: \(Int(updater.progress * 100))%") }

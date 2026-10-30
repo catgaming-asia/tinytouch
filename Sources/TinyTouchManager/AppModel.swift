@@ -155,7 +155,7 @@ final class AppModel: ObservableObject {
         connection = .connecting(found.path)
         let client = DeviceClient(port: found)
         client.onEvent = { [weak self] line in Task { @MainActor in self?.handleTouchEvent(line) } }
-        client.onUnsolicited = { [weak self] line in Task { @MainActor in self?.log(.rx, line) } }
+        client.onUnsolicited = { [weak self] line in Task { @MainActor in self?.log(.info, "Thiết bị gửi: \(line)") } }
         client.onTraffic = { [weak self] outgoing, line in
             Task { @MainActor in self?.log(outgoing ? .tx : .rx, line) }
         }

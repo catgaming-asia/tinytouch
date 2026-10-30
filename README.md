@@ -82,15 +82,13 @@ Mục **Firmware** có hai nguồn:
 1. **Web MrOld**: tải manifest và gói firmware. Manifest lấy từ `touch.mrold.xyz/controller/firmware/manifest.json`. Gói riêng của thiết bị được chọn theo MAC chip; số serial USB `TT-<MAC>` chính là MAC này. Nếu web không truy cập được, app dùng bản đã lưu.
 2. **File trên máy**: chọn một file `.bin`. App kiểm tra SHA-256 với manifest, và từ chối nạp nếu là gói của chip khác hoặc là gói không mã hóa cho chip đã bật mã hóa.
 
-Các bước nạp giống trang web: chạm vân tay → `BOOTLOADER` → `esptool read_mac` → kiểm tra mã hóa flash → `esptool write_flash 0x10000`. Cần cài `esptool` trước:
+Các bước nạp giống trang web: chạm vân tay → `BOOTLOADER` → kết nối bootloader ROM của ESP32-S3 → đọc MAC và thông tin bảo mật → xóa và ghi flash tại `0x10000`. App tự làm hết bằng bộ nạp viết bằng Swift (`ESPFlasher`, cùng giao thức với esptool/esptool-js), **không cần cài esptool**.
 
-```bash
-brew install esptool
-```
+Nút **Kiểm tra chip (chỉ đọc)** đưa thiết bị vào bootloader, đọc MAC và trạng thái mã hóa flash / Secure Boot / Secure Download, rồi khởi động lại thiết bị mà không ghi gì.
 
 Thư mục `firmware-backup/` chứa manifest đã rút gọn và gói đã mã hóa của thiết bị `TT-90DA72470794`. Manifest đầy đủ (có thông tin thiết bị của khách khác) và gói chung không mã hóa chỉ giữ trên máy, không đưa vào git.
 
-Nạp tay khi không có app:
+Nạp tay khi không có app (cần `brew install esptool`):
 
 ```bash
 esptool --chip esp32s3 --port /dev/cu.usbmodemXXXX write_flash 0x10000 firmware-backup/1.1.7/updates/90DA72470794.bin

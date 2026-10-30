@@ -77,7 +77,8 @@ struct GuideView: View {
                 }
 
                 GuideSection("9. Firmware – cập nhật, sao lưu, cứu hộ", icon: "cpu") {
-                    Bullet("Cài công cụ nạp một lần: brew install esptool")
+                    Bullet("Không cần cài thêm công cụ: app tự nói chuyện với bootloader ESP32-S3 (giống esptool-js trên trang web).")
+                    Bullet("\"Kiểm tra chip (chỉ đọc)\": đưa thiết bị vào bootloader, đọc MAC và trạng thái bảo mật (mã hóa flash, Secure Boot) rồi khởi động lại – không ghi gì.")
                     Bullet("Nguồn 1 – Web MrOld: tải đúng gói theo MAC chip (số serial TT-<MAC>), kiểm tra SHA-256. Khi web sập, app dùng bản đã lưu trên máy.")
                     Bullet("Nguồn 2 – File trên máy: chọn file .bin. App từ chối gói của chip khác hoặc gói không mã hóa cho chip đã mã hóa.")
                     Bullet("App tự sao lưu manifest và gói riêng của thiết bị vào ~/Library/Application Support/TinyTouchManager/firmware mỗi lần kết nối.")

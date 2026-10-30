@@ -93,3 +93,26 @@ final class DeviceProtocolTests: XCTestCase {
         XCTAssertFalse(DeviceClient.isTerminal("PROMPT TOUCH 1 2"))
     }
 }
+
+final class ESPFlasherTests: XCTestCase {
+    func testSlipRoundTrip() {
+        let raw: [UInt8] = [0x01, 0xC0, 0x02, 0xDB, 0x03]
+        let encoded = ESPFlasher.slipEncode(raw)
+        XCTAssertEqual(encoded, [0xC0, 0x01, 0xDB, 0xDC, 0x02, 0xDB, 0xDD, 0x03, 0xC0])
+        XCTAssertEqual(ESPFlasher.slipDecode(Array(encoded.dropFirst().dropLast())), raw)
+    }
+
+    func testChecksumMatchesEsptool() {
+        // esptool: checksum = 0xEF ^ every data byte
+        XCTAssertEqual(ESPFlasher.checksum([]), 0xEF)
+        XCTAssertEqual(ESPFlasher.checksum([0xFF, 0x01]), 0xEF ^ 0xFF ^ 0x01)
+    }
+
+    func testSecurityInfoFlags() {
+        let info = ESPFlasher.SecurityInfo(flags: 0b101, flashCryptCount: 0b1, chipID: 9)
+        XCTAssertTrue(info.flashEncrypted)
+        XCTAssertTrue(info.secureBoot)
+        XCTAssertTrue(info.secureDownloadMode)
+        XCTAssertFalse(ESPFlasher.SecurityInfo(flags: 0, flashCryptCount: 0b11, chipID: 9).flashEncrypted)
+    }
+}
