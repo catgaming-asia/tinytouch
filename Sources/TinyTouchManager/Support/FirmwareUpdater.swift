@@ -324,7 +324,7 @@ final class FirmwareUpdater: ObservableObject {
         for _ in 0..<40 {
             try await Task.sleep(nanoseconds: 500_000_000)
             // The ROM loader enumerates as "USB JTAG/serial debug unit", not as tinyTouch.
-            if let port = DeviceDiscovery.ports().first(where: { $0.vendorID == DeviceDiscovery.espressifVendorID && !$0.looksLikeTinyTouch }) {
+            if let port = DeviceDiscovery.ports().first(where: { $0.vendorID == DeviceDiscovery.espressifVendorID && $0.isROMBootloader }) {
                 return port.path
             }
         }

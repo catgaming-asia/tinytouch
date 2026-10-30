@@ -11,6 +11,12 @@ public struct DevicePort: Equatable, Hashable {
     /// Stable identity used for Keychain accounts and pairing.
     public var deviceID: String { serialNumber ?? path }
 
+    /// ESP32-S3 ROM download mode: "USB JTAG/serial debug unit" with the MAC as serial number.
+    public var isROMBootloader: Bool {
+        if let productName, productName.localizedCaseInsensitiveContains("JTAG") { return true }
+        return serialNumber?.contains(":") == true
+    }
+
     public var looksLikeTinyTouch: Bool {
         if let productName, productName.localizedCaseInsensitiveContains("tinytouch") { return true }
         if let serialNumber, serialNumber.hasPrefix("TT-") { return true }
@@ -50,7 +56,8 @@ public enum DeviceDiscovery {
     /// The first port that is clearly a tinyTouch, or else the first Espressif CDC port.
     public static func tinyTouchPort() -> DevicePort? {
         let all = ports()
-        return all.first(where: \.looksLikeTinyTouch) ?? all.first { $0.vendorID == espressifVendorID }
+        return all.first(where: \.looksLikeTinyTouch)
+            ?? all.first { $0.vendorID == espressifVendorID && !$0.isROMBootloader }
     }
 
     private static func property(_ service: io_object_t, _ key: String, searchParents: Bool = true) -> Any? {
